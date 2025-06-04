@@ -1,5 +1,6 @@
 FROM python:3.10.14-slim
 
+# Sistem bağımlılıklarını kur
 RUN apt-get update && apt-get install -y \
     ffmpeg \
     wget \
@@ -14,12 +15,17 @@ RUN apt-get update && apt-get install -y \
     libgtk-3-0 \
     libgbm1 \
     fonts-liberation \
+    libportaudio2 \
+    libportaudiocpp0 \
+    portaudio19-dev \
     && apt-get clean
 
+# Chrome yükle
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
     apt install -y ./google-chrome-stable_current_amd64.deb && \
     rm google-chrome-stable_current_amd64.deb
 
+# ChromeDriver kur
 RUN CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+' | head -1) && \
     wget https://chromedriver.storage.googleapis.com/$CHROME_VERSION/chromedriver_linux64.zip && \
     unzip chromedriver_linux64.zip && \
