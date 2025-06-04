@@ -45,6 +45,9 @@ COPY . /app
 # Install Python dependencies
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Start Flask app
-CMD ["gunicorn", "-w", "1", "-b", "0.0.0.0:10000", "main:app"]
+# 🧠 [EK] Xvfb başlatıcı — Headless tarayıcı için gerekli
+RUN apt-get install -y xvfb
+ENV DISPLAY=:99
 
+# Start Gunicorn with Flask app
+CMD xvfb-run --server-args="-screen 0 1024x768x24" gunicorn -w 1 -b 0.0.0.0:10000 main:app
