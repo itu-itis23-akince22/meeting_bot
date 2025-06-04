@@ -31,12 +31,19 @@ def upload():
     file.save(save_path)
     return f"File saved to {save_path}", 200
 
-def run_bot():
-    recorder.start_recording()
-    bot.start()
-    time.sleep(int(os.getenv('RECORDING_DURATION', 3600)))
-    recorder.stop_and_save()
+# 🚀 Bu satırı __name__ == "__main__" olmadan başlat
+def start_bot_thread():
+    print("🎯 Bot thread starting...")
+    threading.Thread(target=run_bot, daemon=True).start()
 
-if __name__ == "__main__":
-    threading.Thread(target=run_bot).start()
-    app.run(host="0.0.0.0", port=10000)
+def run_bot():
+    try:
+        recorder.start_recording()
+        bot.start()
+        time.sleep(int(os.getenv('RECORDING_DURATION', 3600)))
+        recorder.stop_and_save()
+    except Exception as e:
+        print(f"❌ Error in run_bot: {e}")
+
+# Gunicorn ile çalışırken de başlatılsın:
+start_bot_thread()
