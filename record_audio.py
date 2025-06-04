@@ -3,6 +3,7 @@ import numpy as np
 from scipy.io.wavfile import write
 from pydub import AudioSegment
 import os
+import requests
 from tempfile import NamedTemporaryFile
 from dotenv import load_dotenv
 
@@ -14,6 +15,7 @@ class AudioRecorder:
         self.channels = 2
         self.recording = []
         self.stream = None
+        self.upload_endpoint = os.getenv('UPLOAD_ENDPOINT')  # Upload target
 
     def start_recording(self):
         print("Recording started...")
@@ -23,7 +25,7 @@ class AudioRecorder:
             channels=self.channels,
             dtype='int16',
             callback=self.callback,
-            device=int(os.getenv('AUDIO_INPUT_DEVICE_ID', 1))  # default fallback
+            device=int(os.getenv('AUDIO_INPUT_DEVICE_ID', 1))
         )
         self.stream.start()
 
@@ -34,7 +36,7 @@ class AudioRecorder:
         self.recording.append(indata.copy())
 
     def stop_and_save(self, mp3_filename="meeting_recording.mp3"):
-        """Stops the audio stream and saves the output as an MP3 file."""
+        """Stops the audio stream, saves the output as an MP3 file, and uploads it."""
         if self.stream:
             self.stream.stop()
             self.stream.close()
@@ -62,3 +64,15 @@ class AudioRecorder:
                 os.remove(wav_path)
             except Exception as e:
                 print(f"Could not delete temporary WAV file: {e}")
+
+            # Upload to server if endpoint is defined
+            if self.upload_endpoint:
+                try:
+                    with open(output_path, 'rb') as f:
+                        response = requests.post(self.upload_endpoint, files={'file': f})
+                    if response.status_code == 200:
+                        print("File uploaded successfully.")
+                    else:
+                        print(f"Upload failed with status code: {response.status_code}")
+                except Exception as e:
+                    print(f"Upload error: {e}")
