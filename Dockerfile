@@ -46,4 +46,5 @@ COPY . /app
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
 # Start Flask app
-CMD ["python", "main.py"]
+CMD ["gunicorn", "-w", "1", "-b", "0.0.0.0:10000", "main:app"]
+
