@@ -3,7 +3,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, NoSuchElementException,WebDriverException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException, WebDriverException
 import time
 from record_audio import AudioRecorder
 import os
@@ -16,20 +16,21 @@ class JoinGoogleMeet:
     def __init__(self):
         self.mail_address = os.getenv('EMAIL_ID')
         self.password = os.getenv('EMAIL_PASSWORD')
-        opt = Options()
-        opt.add_argument('--disable-blink-features=AutomationControlled')
-        opt.add_argument('--start-maximized')
 
-        temp_profile = tempfile.mkdtemp()
-        opt.add_argument(f'--user-data-dir={temp_profile}')
-        
-        opt.add_experimental_option("prefs", {
+        options = Options()
+        options.add_argument('--disable-blink-features=AutomationControlled')
+        options.add_argument('--no-sandbox')
+        options.add_argument('--disable-dev-shm-usage')
+        options.add_argument('--disable-gpu')
+        options.add_argument('--headless')  # Use headless mode for deployment
+        options.add_experimental_option("prefs", {
             "profile.default_content_setting_values.media_stream_mic": 1,
             "profile.default_content_setting_values.media_stream_camera": 1,
             "profile.default_content_setting_values.geolocation": 0,
             "profile.default_content_setting_values.notifications": 1
         })
-        self.driver = webdriver.Chrome(options=opt)
+
+        self.driver = webdriver.Chrome(options=options)
 
     def Glogin(self):
         self.driver.get('https://accounts.google.com/ServiceLogin?hl=en')
@@ -42,39 +43,39 @@ class JoinGoogleMeet:
         ).send_keys(self.password)
         self.driver.find_element(By.ID, "passwordNext").click()
         time.sleep(5)
-        print("Gmail login activity complete.")
+        print("✅ Gmail login completed.")
 
     def turnOffMicCam(self, meet_link):
         self.driver.get(meet_link)
         time.sleep(5)
         try:
             self.driver.find_element(By.CSS_SELECTOR, 'div[jscontroller="t2mBxb"][data-anchor-id="hw0c9"]').click()
-            print("Microphone turned off.")
+            print("🎙️ Microphone turned off.")
         except:
-            print("Mic button not found.")
+            print("⚠️ Microphone button not found.")
         try:
             self.driver.find_element(By.CSS_SELECTOR, 'div[jscontroller="bwqwSd"][data-anchor-id="psRWwc"]').click()
-            print("Camera turned off.")
+            print("📷 Camera turned off.")
         except:
-            print("Camera button not found.")
+            print("⚠️ Camera button not found.")
 
     def AskToJoinAndRecord(self, recorder, mp3_path):
         time.sleep(5)
         try:
             self.driver.find_element(By.CSS_SELECTOR, 'button[jsname="Qx7uuf"]').click()
-            print("Ask to join clicked.")
+            print("🙋 Clicked 'Ask to join'.")
         except:
-            print("Already joined or ask button not found.")
+            print("⏩ Already joined or 'Ask to join' button not found.")
 
         recorder.start_recording()
-        print("Recording started during meeting...")
+        print("🎧 Recording started...")
 
         try:
             while True:
-                self.driver.find_element(By.CSS_SELECTOR, 'button[jsname="CQylAd"]') 
+                self.driver.find_element(By.CSS_SELECTOR, 'button[jsname="CQylAd"]')  # Leave call button
                 time.sleep(2)
         except (NoSuchElementException, WebDriverException):
-            print("Meeting ended. Stopping recording.")
+            print("🏁 Meeting ended. Stopping recording.")
             recorder.stop_and_save(mp3_path)
 
 def main():
@@ -88,7 +89,7 @@ def main():
     obj.turnOffMicCam(meet_link)
     obj.AskToJoinAndRecord(recorder, mp3_path)
 
-    print(f"MP3 kaydı burada: {mp3_path}")
+    print(f"🎵 Recording saved at: {mp3_path}")
 
 if __name__ == "__main__":
-    main() 
+    main()
