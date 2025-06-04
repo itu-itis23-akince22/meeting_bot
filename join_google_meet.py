@@ -69,7 +69,7 @@ class JoinGoogleMeet:
             while True:
                 self.driver.find_element(By.CSS_SELECTOR, 'button[jsname="CQylAd"]') 
                 time.sleep(2)
-        except NoSuchElementException:
+        except (NoSuchElementException, WebDriverException):
             print("Meeting ended. Stopping recording.")
             recorder.stop_and_save(mp3_path)
 
