@@ -1,7 +1,8 @@
-FROM python:3.10.14-slim
+FROM python:3.10.14-slim-bullseye
 
-# Sistem bağımlılıklarını kur
-RUN apt-get update && apt-get install -y \
+# Sistem paketlerini güncelle ve eksik kaynakları al
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
     ffmpeg \
     wget \
     unzip \
@@ -18,14 +19,14 @@ RUN apt-get update && apt-get install -y \
     libportaudio2 \
     libportaudiocpp0 \
     portaudio19-dev \
-    && apt-get clean
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Chrome yükle
+# Chrome indir
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
-    apt install -y ./google-chrome-stable_current_amd64.deb && \
-    rm google-chrome-stable_current_amd64.deb
+    apt-get install -y ./google-chrome-stable_current_amd64.deb && \
+    rm ./google-chrome-stable_current_amd64.deb
 
-# ChromeDriver kur
+# ChromeDriver yükle
 RUN CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+' | head -1) && \
     wget https://chromedriver.storage.googleapis.com/$CHROME_VERSION/chromedriver_linux64.zip && \
     unzip chromedriver_linux64.zip && \
