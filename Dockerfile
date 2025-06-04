@@ -1,27 +1,22 @@
 FROM python:3.10.14-slim-bullseye
 
-# Sistem paketlerini güncelle ve eksik kaynakları al
+# Gerekli sistem bağımlılıklarını yükle
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
     ffmpeg \
     wget \
     unzip \
     xvfb \
     libnss3 \
     libxss1 \
-    libappindicator3-1 \
-    libindicator7 \
     libasound2 \
     libatk-bridge2.0-0 \
     libgtk-3-0 \
     libgbm1 \
-    fonts-liberation \
     libportaudio2 \
-    libportaudiocpp0 \
     portaudio19-dev \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Chrome indir
+# Google Chrome yükle
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
     apt-get install -y ./google-chrome-stable_current_amd64.deb && \
     rm ./google-chrome-stable_current_amd64.deb
