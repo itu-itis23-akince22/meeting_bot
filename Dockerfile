@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     wget \
     unzip \
     xvfb \
+    xauth \
     gnupg \
     libnss3 \
     libxss1 \
@@ -23,13 +24,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libportaudio2 \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Google Chrome 137.0.7151.69 yükle
+# Google Chrome 137.0.7151.69
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
     apt-get update && \
     apt-get install -y ./google-chrome-stable_current_amd64.deb || apt-get install -f -y && \
     rm ./google-chrome-stable_current_amd64.deb
 
-# ChromeDriver 137.0.7151.69 yükle (Chrome ile tam uyumlu)
+# ChromeDriver 137.0.7151.69
 RUN wget https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/137.0.7151.69/linux64/chromedriver-linux64.zip && \
     unzip chromedriver-linux64.zip && \
     mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver && \
