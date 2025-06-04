@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM python:3.10.14-slim
 
 RUN apt-get update && apt-get install -y \
     ffmpeg \
@@ -32,4 +32,4 @@ COPY . /app
 
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-CMD xvfb-run -a python join_google_meet.py
+CMD ["xvfb-run", "-a", "python", "join_google_meet.py"]
