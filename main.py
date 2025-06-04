@@ -1,22 +1,27 @@
-from flask import Flask
 import threading
 import time
-from join_google_meet import main as start_bot  
+from flask import Flask
+from record_audio import AudioRecorder
+from join_google_meet import GoogleMeetBot
 
 app = Flask(__name__)
+recorder = AudioRecorder()
+bot = GoogleMeetBot()
 
-@app.route('/')
+@app.route("/")
 def home():
-    return "Google Meet Bot is running!"
+    return "Google Meet Bot is Running"
 
-@app.route('/health')
+@app.route("/health")
 def health():
-    return "OK", 200
+    return "OK"
 
 def run_bot():
-    time.sleep(5)  
-    start_bot()
+    recorder.start_recording()
+    bot.start()
+    time.sleep(int(os.getenv('RECORDING_DURATION', 3600)))
+    recorder.stop_and_save()
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     threading.Thread(target=run_bot).start()
-    app.run(host='0.0.0.0', port=10000)
+    app.run(host="0.0.0.0", port=10000)
