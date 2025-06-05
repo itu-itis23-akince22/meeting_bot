@@ -1,7 +1,0 @@
-services:
-  - type: web
-    name: google-meet-bot
-    env: docker
-    plan: free
-    branch: main
-    dockerfilePath: ./Dockerfile
