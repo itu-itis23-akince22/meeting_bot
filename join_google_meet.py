@@ -3,7 +3,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, NoSuchElementException,WebDriverException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException, WebDriverException
 import time
 from record_audio import AudioRecorder
 import os
@@ -38,7 +38,7 @@ class JoinGoogleMeet:
         ).send_keys(self.password)
         self.driver.find_element(By.ID, "passwordNext").click()
         time.sleep(5)
-        print("Gmail login activity complete.")
+        print("Gmail login completed.")
 
     def turnOffMicCam(self, meet_link):
         self.driver.get(meet_link)
@@ -47,7 +47,7 @@ class JoinGoogleMeet:
             self.driver.find_element(By.CSS_SELECTOR, 'div[jscontroller="t2mBxb"][data-anchor-id="hw0c9"]').click()
             print("Microphone turned off.")
         except:
-            print("Mic button not found.")
+            print("Microphone button not found.")
         try:
             self.driver.find_element(By.CSS_SELECTOR, 'div[jscontroller="bwqwSd"][data-anchor-id="psRWwc"]').click()
             print("Camera turned off.")
@@ -58,16 +58,16 @@ class JoinGoogleMeet:
         time.sleep(5)
         try:
             self.driver.find_element(By.CSS_SELECTOR, 'button[jsname="Qx7uuf"]').click()
-            print("Ask to join clicked.")
+            print("Clicked 'Ask to Join'.")
         except:
-            print("Already joined or ask button not found.")
+            print("Already joined or 'Ask to Join' button not found.")
 
         recorder.start_recording()
-        print("Recording started during meeting...")
+        print("Recording started during the meeting...")
 
         try:
             while True:
-                self.driver.find_element(By.CSS_SELECTOR, 'button[jsname="CQylAd"]') 
+                self.driver.find_element(By.CSS_SELECTOR, 'button[jsname="CQylAd"]')  # Leave button
                 time.sleep(2)
         except (NoSuchElementException, WebDriverException):
             print("Meeting ended. Stopping recording.")
@@ -84,7 +84,7 @@ def main():
     obj.turnOffMicCam(meet_link)
     obj.AskToJoinAndRecord(recorder, mp3_path)
 
-    print(f"MP3 kaydı burada: {mp3_path}")
+    print(f"MP3 recording saved at: {mp3_path}")
 
 if __name__ == "__main__":
-    main() 
+    main()
